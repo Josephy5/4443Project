@@ -18,6 +18,15 @@ import com.google.android.material.slider.RangeSlider;
 
 import java.io.OutputStream;
 
+/**
+ * The main activity of the painting app
+ *
+ * Code below is based on a paint application tutorial from geekforgeeks website
+ * https://www.geeksforgeeks.org/how-to-create-a-paint-application-in-android/
+ *
+ * despite being mostly based on the tutorial, the code is modified a bit to satisfy the
+ * needs of our final project
+ */
 public class MainActivity extends AppCompatActivity {
 
     // creating the object of type DrawView
@@ -25,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
     private DrawView paint;
 
     // creating objects of type button
-    private ImageButton save, color, stroke, undo;
+    private ImageButton clear, color, stroke, undo;
 
     // creating a RangeSlider object, which will
     // help in selecting the width of the Stroke
@@ -40,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
         paint = (DrawView) findViewById(R.id.draw_view);
         rangeSlider = (RangeSlider) findViewById(R.id.rangebar);
         undo = (ImageButton) findViewById(R.id.btn_undo);
-        save = (ImageButton) findViewById(R.id.btn_save);
+        clear = (ImageButton) findViewById(R.id.btn_clear);
         color = (ImageButton) findViewById(R.id.btn_color);
         stroke = (ImageButton) findViewById(R.id.btn_stroke);
 
@@ -56,44 +65,11 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // the save button will save the current
-        // canvas which is actually a bitmap
-        // in form of PNG, in the storage
-        save.setOnClickListener(new View.OnClickListener() {
+        // the clear button will remove everything on the canvas, ensuring a clean white canvas
+        clear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                // getting the bitmap from DrawView class
-                Bitmap bmp = paint.save();
-
-                // opening a OutputStream to write into the file
-                OutputStream imageOutStream = null;
-
-                ContentValues cv = new ContentValues();
-
-                // name of the file
-                cv.put(MediaStore.Images.Media.DISPLAY_NAME, "drawing.png");
-
-                // type of the file
-                cv.put(MediaStore.Images.Media.MIME_TYPE, "image/png");
-
-                // location of the file to be saved
-                cv.put(MediaStore.Images.Media.RELATIVE_PATH, Environment.DIRECTORY_PICTURES);
-
-                // get the Uri of the file which is to be created in the storage
-                Uri uri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, cv);
-                try {
-                    // open the output stream with the above uri
-                    imageOutStream = getContentResolver().openOutputStream(uri);
-
-                    // this method writes the files in storage
-                    bmp.compress(Bitmap.CompressFormat.PNG, 100, imageOutStream);
-
-                    // close the output stream after use
-                    imageOutStream.close();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                paint.clear();
             }
         });
         // the color button will allow the user

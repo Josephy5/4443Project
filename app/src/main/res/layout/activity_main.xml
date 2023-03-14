@@ -23,15 +23,15 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:src="@drawable/ic_undo"
-                android:text="Undo" />
+                android:text="Undo"/>
 
             <ImageButton
-                android:id="@+id/btn_save"
+                android:id="@+id/btn_clear"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:src="@drawable/ic_floppy_disk"
-                android:text="Save" />
+                android:src="@drawable/ic_clear"
+                android:text="Clear" />
 
             <ImageButton
                 android:id="@+id/btn_color"
@@ -39,7 +39,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:src="@drawable/ic_colorpicker"
-                android:text="Color" />
+                android:text="Color"/>
 
             <ImageButton
                 android:id="@+id/btn_stroke"
@@ -47,7 +47,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:src="@drawable/ic_paint_brush"
-                android:text="Stroke" />
+                android:text="Stroke"/>
         </LinearLayout>
 
         <LinearLayout

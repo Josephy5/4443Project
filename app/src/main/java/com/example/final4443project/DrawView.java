@@ -11,7 +11,15 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import java.util.ArrayList;
-
+/**
+ * Custom drawview class for the painting app
+ *
+ * Code below is based on a paint application tutorial from geekforgeeks website
+ * https://www.geeksforgeeks.org/how-to-create-a-paint-application-in-android/
+ *
+ * despite being mostly based on the tutorial, the code is modified a bit to satisfy the
+ * needs of our final project
+ */
 public class DrawView extends View {
 
     private static final float TOUCH_TOLERANCE = 4;
@@ -90,6 +98,12 @@ public class DrawView extends View {
     // this methods returns the current bitmap
     public Bitmap save() {
         return mBitmap;
+    }
+
+    public void clear(){
+        mCanvas.drawColor(Color.WHITE);
+        invalidate();
+        mPath.reset();
     }
 
     // this is the main method where

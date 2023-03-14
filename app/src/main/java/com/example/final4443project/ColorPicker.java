@@ -24,6 +24,16 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import static com.example.final4443project.ColorUtils.dip2px;
 import static com.example.final4443project.ColorUtils.getDimensionDp;
+/**
+ * One of the classes/code within the colorpicker package that the painting app's main activity uses
+ *
+ * Reason why it is here as a java class instead being imported in gradle is because the gradle system
+ * couldn't import it from the gradle setting, stating that it is not there. Thus, we had to import the
+ * whole package here as project files
+ *
+ * Code below is based on the github repo for the Kristiyan Petrov's colorpicker package
+ * https://github.com/kristiyanP/colorpicker
+ */
 public class ColorPicker {
 
     private OnChooseColorListener onChooseColorListener;
