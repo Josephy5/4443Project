@@ -58,7 +58,7 @@ public class Final4443ProjectBenchmarks {
                 Collections.singletonList(new FrameTimingMetric()),
                 CompilationMode.DEFAULT,
                 StartupMode.COLD,
-                1,
+                2,
                 scope -> {
                     scope.pressHome();
                     scope.startActivityAndWait();
@@ -69,11 +69,10 @@ public class Final4443ProjectBenchmarks {
     public void benchmarkLine() {
         UiObject draw = new UiObject(new UiSelector().descriptionContains("draw_view"));
 
-        for (int i=0;i<50;++i) {
+        for (int i=0;i<5;++i) {
             try {
                 draw.click();
-                draw.dragTo(2,2,20);
-                draw.click();
+                draw.dragTo(1,1,10);
             } catch (UiObjectNotFoundException e) {
                 e.printStackTrace();
             }
