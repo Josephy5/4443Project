@@ -32,9 +32,10 @@ public class DrawView extends View {
     final static int INVALID = -1;
     //private float mX, mY;
     //private Path mPath;
+    private HashMap<Integer, Float> mX = new HashMap<Integer, Float>();
+    private HashMap<Integer, Float> mY = new HashMap<Integer, Float>();
+    private HashMap<Integer, Path> paths = new HashMap<Integer, Path>();
 
-    //private float[] mX = new float[5], mY = new float[5];
-    //private Path[] mPath = new Path[5];
     private int touchCount = 0;
     private int[] touchPointIDs = new int[5];
 
@@ -71,11 +72,6 @@ public class DrawView extends View {
         mPaint.setStyle(Paint.Style.STROKE);
         mPaint.setStrokeJoin(Paint.Join.ROUND);
         mPaint.setStrokeCap(Paint.Cap.ROUND);
-
-        /*for (int i = 0; i < 5; ++i) {
-            touchPointIDs[i] = INVALID;
-            mPath[i] = new Path();
-        }*/
 
         // 0xff=255 in decimal
         mPaint.setAlpha(0xff);
@@ -118,19 +114,11 @@ public class DrawView extends View {
         }
     }
 
-    // this methods returns the current bitmap
-    /*public Bitmap save() {
-        return mBitmap;
-    }*/
-
     public void clear() {
         mCanvas.drawColor(Color.WHITE);
         invalidate();
-        //for (int i = 0; i < 5; ++i) {
         paths.clear();
         pathsH.clear();
-        //}
-        //mPath.reset();
     }
 
     public void benchmarkDrawCircle() {
@@ -145,7 +133,6 @@ public class DrawView extends View {
         pathsH.add(stroke);
 
         //Log.d("SEND HELP", String.valueOf(pathsH.size()));
-        //drawManually(mCanvas);
     }
 
     // this is the main method where
@@ -167,27 +154,19 @@ public class DrawView extends View {
             mPaint.setStrokeWidth(fp.strokeWidth);
             mCanvas.drawPath(fp.path, mPaint);
         }
-        /*for (int size = paths.size(), i = 0; i < size; i++) {
-            Path path = paths.get(i);
-            mPaint.setColor(currentColor);
-            mPaint.setStrokeWidth(strokeWidth);
-            if (path != null) {
-                mCanvas.drawPath(path, mPaint);
-            }
-        }*/
 
         canvas.drawBitmap(mBitmap, 0, 0, mBitmapPaint);
         canvas.restore();
     }
-
-    private HashMap<Integer, Float> mX = new HashMap<Integer, Float>();
-    private HashMap<Integer, Float> mY = new HashMap<Integer, Float>();
-    private HashMap<Integer, Path> paths = new HashMap<Integer, Path>();
-
+    /*
+     * Multitouch solution by Divers on stackoverflow, https://stackoverflow.com/questions/11966692/android-smooth-multi-touch-drawing
+     *
+     * modified Divers' solution a bit to satisfy the needs of the project and remove
+     * some small unnecessary things that we don't need for this project
+     */
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         int maskedAction = event.getActionMasked();
-
         //Log.d(TAG, "onTouchEvent");
 
         switch (maskedAction) {
@@ -195,8 +174,6 @@ public class DrawView extends View {
             case MotionEvent.ACTION_POINTER_DOWN: {
                 for (int size = event.getPointerCount(), i = 0; i < size; i++) {
                     Path p = new Path();
-                    //Stroke fp = new Stroke(currentColor, strokeWidth, p);
-                    //pathsH.add(fp);
                     p.moveTo(event.getX(i), event.getY(i));
                     paths.put(event.getPointerId(i), p);
                     mX.put(event.getPointerId(i), event.getX(i));
@@ -228,168 +205,11 @@ public class DrawView extends View {
                     if (p != null) {
                         p.lineTo(event.getX(i), event.getY(i));
                         invalidate();
-                        //paths.remove(event.getPointerId(i));
-                        //mX.remove(event.getPointerId(i));
-                        //mY.remove(event.getPointerId(i));
                     }
                 }
                 break;
             }
         }
-
         return true;
     }
-
-    // the below methods manages the touch
-    // response of the user on the screen
-
-    // firstly, we create a new Stroke
-    // and add it to the paths list
-    /*private void touchStart(float x, float y) {
-        mPath = new Path();
-        Stroke fp = new Stroke(currentColor, strokeWidth, mPath);
-        paths.add(fp);
-
-        // finally remove any curve
-        // or line from the path
-        mPath.reset();
-
-        // this methods sets the starting
-        // point of the line being drawn
-        mPath.moveTo(x, y);
-
-        // we save the current
-        // coordinates of the finger
-        mX = x;
-        mY = y;
-    }
-
-    // in this method we check
-    // if the move of finger on the
-    // screen is greater than the
-    // Tolerance we have previously defined,
-    // then we call the quadTo() method which
-    // actually smooths the turns we create,
-    // by calculating the mean position between
-    // the previous position and current position
-    private void touchMove(float x, float y) {
-        float dx = Math.abs(x - mX);
-        float dy = Math.abs(y - mY);
-
-        if (dx >= TOUCH_TOLERANCE || dy >= TOUCH_TOLERANCE) {
-            mPath.quadTo(mX, mY, (x + mX) / 2, (y + mY) / 2);
-            mX = x;
-            mY = y;
-        }
-    }
-
-    // at the end, we call the lineTo method
-    // which simply draws the line until
-    // the end position
-    private void touchUp() {
-        mPath.lineTo(mX, mY);
-    }*/
-
-    // the onTouchEvent() method provides us with
-    // the information about the type of motion
-    // which has been taken place, and according
-    // to that we call our desired methods
-    /*@Override
-    public boolean onTouchEvent(MotionEvent event) {
-        float x = event.getX();
-        float y = event.getY();
-
-        // From demo_multitouch, get the index of the pointer (NOTE: will be 0 for ACTION_DOWN or ACTION_UP)
-        final int pointerIndex = event.getActionIndex();
-        // From demo_multitouch, get the id of the pointer
-        final int id = event.getPointerId(pointerIndex);
-
-        switch (event.getAction()) {
-            case MotionEvent.ACTION_DOWN:
-                touchPointIDs[touchCount] = id;
-                mPath[touchCount] = new Path();
-                Stroke fp = new Stroke(currentColor, strokeWidth, mPath[touchCount]);
-                paths.add(fp);
-
-                // finally remove any curve
-                // or line from the path
-                mPath[touchCount].reset();
-
-                // this methods sets the starting
-                // point of the line being drawn
-                mPath[touchCount].moveTo(x, y);
-
-                // we save the current
-                // coordinates of the finger
-                mX[touchCount] = x;
-                mY[touchCount] = y;
-                ++touchCount;
-                //touchStart(x, y);
-                invalidate();
-                break;
-
-            case MotionEvent.ACTION_POINTER_DOWN:
-                for (int i = 0; i < 5; ++i) {
-                    if (touchPointIDs[i] == INVALID) {
-                        touchPointIDs[i] = id;
-                        mPath[touchCount] = new Path();
-                        Stroke fp2 = new Stroke(currentColor, strokeWidth, mPath[i]);
-                        paths.add(fp2);
-
-                        // finally remove any curve
-                        // or line from the path
-                        mPath[i].reset();
-
-                        // this methods sets the starting
-                        // point of the line being drawn
-                        mPath[i].moveTo(x, y);
-
-                        // we save the current
-                        // coordinates of the finger
-                        mX[i] = x;
-                        mY[i] = y;
-                        ++touchCount;
-                        break;
-                    }
-                }
-                //touchStart(x, y);
-                invalidate();
-                break;
-
-            case MotionEvent.ACTION_MOVE:
-                //touchMove(x, y);
-                for (int i = 0; i < 5; ++i) {
-                    if (touchPointIDs[i] != INVALID) {
-                        float dx = Math.abs(x - mX[i]);
-                        float dy = Math.abs(y - mY[i]);
-
-                        if (dx >= TOUCH_TOLERANCE || dy >= TOUCH_TOLERANCE) {
-                            mPath[i].quadTo(mX[i], mY[i], (x + mX[i]) / 2, (y + mY[i]) / 2);
-                            mX[i] = x;
-                            mY[i] = y;
-                        }
-                    }
-                }
-                invalidate();
-                break;
-
-            case MotionEvent.ACTION_UP:
-            case MotionEvent.ACTION_POINTER_UP:
-                //touchUp();
-                for (int i = 0; i < 5; ++i) {
-                    if (touchPointIDs[i] == id) {
-                        mPath[i].lineTo(mX[i], mY[i]);
-                        //touchPointIDs[i] = INVALID;
-                        //mPath[i].reset();
-                        //--touchCount;
-                        break;
-                    }
-                }
-                invalidate();
-                break;
-
-        }
-        return true;*/
-
-
 }
