@@ -37,7 +37,7 @@ public class Final4443ProjectBenchmarks {
     public MacrobenchmarkRule mBenchmarkRule = new MacrobenchmarkRule();
 
     //Default macro benchmark method for reference
-    @Test
+    /*@Test
     public void startup() {
         mBenchmarkRule.measureRepeated(
                 "com.example.final4443project",
@@ -50,7 +50,7 @@ public class Final4443ProjectBenchmarks {
                     scope.startActivityAndWait();
                     return null;
                 });
-    }
+    }*/
     @Test
     public void drawLines(){
         mBenchmarkRule.measureRepeated(
@@ -58,7 +58,7 @@ public class Final4443ProjectBenchmarks {
                 Collections.singletonList(new FrameTimingMetric()),
                 CompilationMode.DEFAULT,
                 StartupMode.COLD,
-                2,
+                1,
                 scope -> {
                     scope.pressHome();
                     scope.startActivityAndWait();
@@ -68,11 +68,13 @@ public class Final4443ProjectBenchmarks {
     }
     public void benchmarkLine() {
         UiObject draw = new UiObject(new UiSelector().descriptionContains("draw_view"));
-
-        for (int i=0;i<5;++i) {
+        int x=0,y=0;
+        for (int i=0;i<10;++i) {
             try {
                 draw.click();
-                draw.dragTo(1,1,10);
+                x=(int)Math.floor(Math.random() *(50 - (-50) + 1) + (-50));
+                y=(int)Math.floor(Math.random() *(50 - (-50) + 1) + (-50));
+                draw.dragTo(x,y,10);
             } catch (UiObjectNotFoundException e) {
                 e.printStackTrace();
             }
